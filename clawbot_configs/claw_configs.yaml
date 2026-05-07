@@ -1,0 +1,82 @@
+# OpenClaw Auto-Router Proxy Config
+#
+# Routes requests to different models based on semantic intent:
+#   - Heartbeat / health checks -> local ollama (fast, free)
+#   - Coding tasks -> OpenRouter (kimi-k2, deepseek-v4, codex) with load balancing
+#   - Skill/tool usage -> GPT-4o-mini (via OpenRouter)
+#   - Vision (image/video recognition, image generation) -> Gemini 2.5 Flash
+#   - Video generation -> Seedance 2.0 Fast (via OpenRouter)
+#   - General (fallback) -> Gemini 2.5 Flash
+#
+# Usage:
+#   litellm --config routing_configs/config.yaml
+#
+# Client calls:
+#   POST /v1/chat/completions { "model": "openclaw-router", ... }
+
+model_list:
+  # ─── Auto-Router Entry Point ───
+  - model_name: openclaw-router
+    litellm_params:
+      model: auto_router/semantic
+      auto_router_config_path: routing_configs/routes.json
+      auto_router_default_model: general
+      auto_router_embedding_model: ollama/nomic-embed-text
+
+  # ─── Embedding Model (used by the router itself) ───
+  - model_name: ollama/nomic-embed-text
+    litellm_params:
+      model: ollama/nomic-embed-text
+      api_base: http://localhost:11434
+
+  # ─── Heartbeat -> Local Ollama ───
+  - model_name: heartbeat
+    litellm_params:
+      model: ollama/heartbeat-llama3.2
+      api_base: http://localhost:11434
+
+  # ─── Coding -> OpenRouter (load-balanced across 3 models) ───
+  - model_name: coding
+    litellm_params:
+      model: openrouter/moonshotai/kimi-k2.6
+      api_key: os.environ/OPENROUTER_API_KEY
+
+  - model_name: coding
+    litellm_params:
+      model: openrouter/deepseek/deepseek-v4-pro
+      api_key: os.environ/OPENROUTER_API_KEY
+
+  # - model_name: coding
+  #   litellm_params:
+  #     model: openrouter/openai/gpt-5.3-codex
+  #     api_key: os.environ/OPENROUTER_API_KEY
+
+  # ─── Skill -> GPT-4o-mini (via OpenRouter) ───
+  - model_name: skill
+    litellm_params:
+      model: openrouter/openai/gpt-4o-mini
+      api_key: os.environ/OPENROUTER_API_KEY
+
+  # ─── Vision (image recognition/generation, video recognition) -> Gemini 2.5 Flash ───
+  - model_name: vision
+    litellm_params:
+      model: gemini/gemini-2.5-flash
+      api_key: os.environ/GEMINI_API_KEY
+
+  # ─── Video Generation -> Seedance 2.0 Fast (via OpenRouter) ───
+  - model_name: video_generation
+    litellm_params:
+      model: openrouter/bytedance/seedance-2.0-fast
+      api_key: os.environ/OPENROUTER_API_KEY
+
+  # ─── General (default fallback) -> Gemini 2.5 Flash ───
+  - model_name: general
+    litellm_params:
+      model: gemini/gemini-2.5-flash
+      api_key: os.environ/GEMINI_API_KEY
+
+litellm_settings:
+  drop_params: true
+
+general_settings:
+  master_key: os.environ/LITELLM_MASTER_KEY
