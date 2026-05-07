@@ -19,7 +19,7 @@ model_list:
   - model_name: openclaw-router
     litellm_params:
       model: auto_router/semantic
-      auto_router_config_path: routing_configs/routes.json
+      auto_router_config_path: /app/configs/routes.json
       auto_router_default_model: general
       auto_router_embedding_model: ollama/nomic-embed-text
 
