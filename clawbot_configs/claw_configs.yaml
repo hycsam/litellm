@@ -49,7 +49,7 @@ model_list:
               "score_threshold": 0.4
             },
             {
-              "name": "coding",
+              "name": "general",
               "description": "Code generation, debugging, programming, implementation tasks",
               "utterances": [
                 "write a function that sorts an array",
@@ -91,7 +91,7 @@ model_list:
               "score_threshold": 0.3
             },
             {
-              "name": "skill",
+              "name": "general",
               "description": "Tool usage, skill execution, agent actions, workflow orchestration",
               "utterances": [
                 "search for all Python files in this project",
@@ -134,7 +134,7 @@ model_list:
               "score_threshold": 0.3
             },
             {
-              "name": "vision",
+              "name": "general",
               "description": "Image recognition, image generation, video recognition, visual content analysis",
               "utterances": [
                 "what is in this image",
@@ -174,7 +174,7 @@ model_list:
               "score_threshold": 0.3
             },
             {
-              "name": "video_generation",
+              "name": "general",
               "description": "Video generation, video creation, animation, motion synthesis",
               "utterances": [
                 "generate a video of a dog running on the beach",
@@ -208,8 +208,11 @@ model_list:
   # ─── Embedding Model (used by the router itself) ───
   - model_name: ollama/nomic-embed-text
     litellm_params:
-      model: ollama/nomic-embed-text
-      api_base: http://host.docker.internal:11434
+      # model: ollama/nomic-embed-text
+      # api_base: http://host.docker.internal:11434
+      model: openai/nomic-embed-text # 强制 LiteLLM 使用标准输入格式
+      api_base: "http://host.docker.internal:11434/v1"
+      api_key: "sk-not-needed"
 
   # ─── Heartbeat -> Local Ollama ───
   - model_name: heartbeat
@@ -218,44 +221,55 @@ model_list:
       api_base: http://host.docker.internal:11434
 
   # ─── Coding -> OpenRouter (load-balanced across 3 models) ───
-  - model_name: coding
-    litellm_params:
-      model: openrouter/moonshotai/kimi-k2.6
-      api_key: os.environ/OPENROUTER_API_KEY
-
-  - model_name: coding
-    litellm_params:
-      model: openrouter/deepseek/deepseek-v4-pro
-      api_key: os.environ/OPENROUTER_API_KEY
-
+  # - model_name: coding
+  #   litellm_params:
+  #     model: openrouter/moonshotai/kimi-k2.6
+  #     api_key: os.environ/OPENROUTER_API_KEY
+  #
+  # - model_name: coding
+  #   litellm_params:
+  #     model: openrouter/deepseek/deepseek-v4-pro
+  #     api_key: os.environ/OPENROUTER_API_KEY
+  #
   # - model_name: coding
   #   litellm_params:
   #     model: openrouter/openai/gpt-5.3-codex
   #     api_key: os.environ/OPENROUTER_API_KEY
-
+  #
   # ─── Skill -> GPT-4o-mini (via OpenRouter) ───
-  - model_name: skill
+  # - model_name: skill
+  #   litellm_params:
+  #     model: openrouter/openai/gpt-4o-mini
+  #     api_key: os.environ/OPENROUTER_API_KEY
+  #
+  # # ─── Vision (image recognition/generation, video recognition) -> Gemini 2.5 Flash ───
+  # - model_name: vision
+  #   litellm_params:
+  #     model: gemini/gemini-2.5-flash
+  #     api_key: os.environ/GEMINI_API_KEY
+  #
+  # # ─── Video Generation -> Seedance 2.0 Fast (via OpenRouter) ───
+  # - model_name: video_generation
+  #   litellm_params:
+  #     model: openrouter/bytedance/seedance-2.0-fast
+  #     api_key: os.environ/OPENROUTER_API_KEY
+  #
+  # # ─── General (default fallback) -> Gemini 2.5 Flash ───
+  # - model_name: general
+  #   litellm_params:
+  #     model: gemini/gemini-2.5-flash
+  #     api_key: os.environ/GEMINI_API_KEY
+
+  - model_name: openrouter_auto
     litellm_params:
-      model: openrouter/openai/gpt-4o-mini
+      model: openrouter/auto
       api_key: os.environ/OPENROUTER_API_KEY
 
-  # ─── Vision (image recognition/generation, video recognition) -> Gemini 2.5 Flash ───
-  - model_name: vision
-    litellm_params:
-      model: gemini/gemini-2.5-flash
-      api_key: os.environ/GEMINI_API_KEY
-
-  # ─── Video Generation -> Seedance 2.0 Fast (via OpenRouter) ───
-  - model_name: video_generation
-    litellm_params:
-      model: openrouter/bytedance/seedance-2.0-fast
-      api_key: os.environ/OPENROUTER_API_KEY
-
-  # ─── General (default fallback) -> Gemini 2.5 Flash ───
   - model_name: general
     litellm_params:
-      model: gemini/gemini-2.5-flash
-      api_key: os.environ/GEMINI_API_KEY
+      model: anthropic/claude-haiku
+      api_key: os.environ/ANTHROPIC_API_KEY
+      api_base: http://Sams-MacBook-Pro.local:4000
 
 litellm_settings:
   drop_params: true

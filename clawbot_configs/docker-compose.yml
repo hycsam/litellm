@@ -1,17 +1,21 @@
 services:
   litellm:
-    image: docker.litellm.ai/berriai/litellm:main-stable
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: litellm-clawbot:local
     #########################################
     ## Uncomment these lines to start proxy with a config.yaml file ##
     volumes:
-      - ./clawbot_configs:/app/configs
+      - ./claw_configs.yaml:/app/configs/claw_configs.yaml:ro
+      - ./auto_router.py:/app/.venv/lib/python3.13/site-packages/litellm/router_strategy/auto_router/auto_router.py:ro
     command:
       - "--config=/app/configs/claw_configs.yaml"
     ##############################################
     ports:
       - "4000:4000" # Map the container port to the host, change the host port if necessary
     env_file:
-      - ./clawbot_configs/.env # Load local .env file
+      - .env # Load local .env file
     depends_on:
       - db # Indicates that this service depends on the 'db' service, ensuring 'db' starts first
     healthcheck:
@@ -47,7 +51,7 @@ services:
     image: prom/prometheus
     volumes:
       - prometheus_data:/prometheus
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
     ports:
       - "9090:9090"
     command:
