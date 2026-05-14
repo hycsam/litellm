@@ -20,7 +20,7 @@ else:
 
 class AutoRouter(CustomLogger):
     DEFAULT_AUTO_SYNC_VALUE = "local"
-    MAX_EMBEDDING_INPUT_TOKENS = 2048
+    MAX_EMBEDDING_INPUT_TOKENS = 1640  # ~= 2048 * 0.8
     EMBEDDING_TOKENIZER_NAME = "nomic-ai/nomic-embed-text-v1"
 
     def __init__(
