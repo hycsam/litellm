@@ -8,3 +8,4 @@ ENV HF_HOME=/opt/hf-cache
 RUN mkdir -p /opt/hf-cache && chmod -R a+rX /opt/hf-cache
 
 RUN /app/.venv/bin/python -c "from transformers import AutoTokenizer; AutoTokenizer.from_pretrained('nomic-ai/nomic-embed-text-v1')"
+RUN /app/.venv/bin/python -c "from transformers import AutoTokenizer; AutoTokenizer.from_pretrained('nomic-ai/modernbert-embed-base')"

@@ -24,36 +24,30 @@ model_list:
           "routes": [
             {
               "name": "heartbeat",
-              "description": "Health checks, pings, keep-alive, status checks",
+              "description": "OpenClaw heartbeat / liveness probe pings",
               "utterances": [
                 "Heartbeat: OpenClaw system health check.",
-                "ping",
-                "pong",
+                "OpenClaw heartbeat ping",
+                "Reply HEARTBEAT_OK if nothing needs attention",
+                "Respond with HEARTBEAT_OK",
+                "Read HEARTBEAT.md if it exists",
+                "OpenClaw workspace heartbeat instruction at /sandbox/.openclaw/workspace/HEARTBEAT.md",
                 "heartbeat",
                 "health check",
-                "status check",
-                "are you alive",
-                "are you there",
-                "are you online",
-                "system status",
-                "connection test",
-                "keep alive",
-                "keepalive",
-                "ready check",
+                "healthcheck",
                 "liveness probe",
                 "readiness probe",
-                "echo",
-                "noop",
-                "ack"
+                "Current time: 2026-05-18 21:09 UTC"
               ],
-              "score_threshold": 0.4
+              "score_threshold": 0.68
             }
           ]
         }
       auto_router_default_model: general
       auto_router_embedding_model: ollama/nomic-embed-text
+      # auto_router_embedding_model: omlx/nomicai-modernbert-embed-base-bf16
 
-  # ─── Embedding Model (used by the router itself) ───
+      # ─── Embedding Model (used by the router itself) ───
   - model_name: ollama/nomic-embed-text
     litellm_params:
       # model: ollama/nomic-embed-text
@@ -61,6 +55,12 @@ model_list:
       model: openai/nomic-embed-text # 强制 LiteLLM 使用标准输入格式
       api_base: "http://host.docker.internal:11434/v1"
       api_key: "sk-not-needed"
+
+  - model_name: omlx/nomicai-modernbert-embed-base-bf16
+    litellm_params:
+      model: openai/nomicai-modernbert-embed-base-bf16
+      api_base: "http://host.docker.internal:8000/v1"
+      api_key: "os.environ/OMLX_API_KEY"
 
   # ─── Heartbeat -> OpenRouter Gemini 2.5 Flash Lite ───
   - model_name: heartbeat
