@@ -9,3 +9,6 @@ RUN mkdir -p /opt/hf-cache && chmod -R a+rX /opt/hf-cache
 
 RUN /app/.venv/bin/python -c "from transformers import AutoTokenizer; AutoTokenizer.from_pretrained('nomic-ai/nomic-embed-text-v1')"
 RUN /app/.venv/bin/python -c "from transformers import AutoTokenizer; AutoTokenizer.from_pretrained('nomic-ai/modernbert-embed-base')"
+
+COPY ./auto_router.py /app/.venv/lib/python3.13/site-packages/litellm/router_strategy/auto_router/auto_router.py
+COPY ./claw_configs.yaml /app/configs/claw_configs.yaml

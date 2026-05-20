@@ -6,9 +6,6 @@ services:
     image: litellm-clawbot:local
     #########################################
     ## Uncomment these lines to start proxy with a config.yaml file ##
-    volumes:
-      - ./claw_configs.yaml:/app/configs/claw_configs.yaml:ro
-      - ./auto_router.py:/app/.venv/lib/python3.13/site-packages/litellm/router_strategy/auto_router/auto_router.py:ro
     command:
       - "--config=/app/configs/claw_configs.yaml"
     ##############################################
