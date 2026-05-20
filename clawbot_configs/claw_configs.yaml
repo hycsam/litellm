@@ -39,7 +39,7 @@ model_list:
                 "readiness probe",
                 "Current time: 2026-05-18 21:09 UTC"
               ],
-              "score_threshold": 0.68
+              "score_threshold": 0.55
             }
           ]
         }
