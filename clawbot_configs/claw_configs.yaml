@@ -39,13 +39,13 @@ model_list:
                 "readiness probe",
                 "Current time: 2026-05-18 21:09 UTC"
               ],
-              "score_threshold": 0.55
+              "score_threshold": 0.60
             }
           ]
         }
       auto_router_default_model: general
-      auto_router_embedding_model: ollama/nomic-embed-text
-      # auto_router_embedding_model: omlx/nomicai-modernbert-embed-base-bf16
+      auto_router_embedding_model: omlx/nomicai-modernbert-embed-base-bf16
+      # auto_router_embedding_model: ollama/nomic-embed-text
 
       # ─── Embedding Model (used by the router itself) ───
   - model_name: ollama/nomic-embed-text
@@ -61,6 +61,7 @@ model_list:
       model: openai/nomicai-modernbert-embed-base-bf16
       api_base: "http://host.docker.internal:8000/v1"
       api_key: "os.environ/OMLX_API_KEY"
+      encoding_format: float
 
   # ─── Heartbeat -> OpenRouter Gemini 2.5 Flash Lite ───
   - model_name: heartbeat
