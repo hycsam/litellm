@@ -45,17 +45,8 @@ model_list:
         }
       auto_router_default_model: general
       auto_router_embedding_model: omlx/nomicai-modernbert-embed-base-bf16
-      # auto_router_embedding_model: ollama/nomic-embed-text
 
-      # ─── Embedding Model (used by the router itself) ───
-  - model_name: ollama/nomic-embed-text
-    litellm_params:
-      # model: ollama/nomic-embed-text
-      # api_base: http://host.docker.internal:11434
-      model: openai/nomic-embed-text # 强制 LiteLLM 使用标准输入格式
-      api_base: "http://host.docker.internal:11434/v1"
-      api_key: "sk-not-needed"
-
+  # ─── Embedding Model (used by the router itself) ───
   - model_name: omlx/nomicai-modernbert-embed-base-bf16
     litellm_params:
       model: openai/nomicai-modernbert-embed-base-bf16
@@ -69,19 +60,34 @@ model_list:
       model: openrouter/openai/gpt-oss-120b:free
       api_key: os.environ/OPENROUTER_API_KEY
 
-  - model_name: openrouter_auto
+  # ─── Work models
+  - model_name: general
     litellm_params:
       model: openrouter/auto
       api_key: os.environ/OPENROUTER_API_KEY
 
-  - model_name: general
+  - model_name: floodgate
     litellm_params:
       model: anthropic/claude-haiku
       api_key: os.environ/ANTHROPIC_API_KEY
       api_base: http://Sams-MacBook-Pro.local:4000
 
+  # ─── General fallback (load-balanced across two free OpenRouter models) ───
+  - model_name: general_fallback
+    litellm_params:
+      model: openrouter/openai/gpt-oss-120b:free
+      api_key: os.environ/OPENROUTER_API_KEY
+
+  - model_name: general_fallback
+    litellm_params:
+      model: openrouter/deepseek/deepseek-v4-flash:free
+      api_key: os.environ/OPENROUTER_API_KEY
+
 litellm_settings:
   drop_params: true
+  fallbacks:
+    - general: ["general_fallback"]
+    - openclaw-router: ["general_fallback"]
 
 general_settings:
   master_key: os.environ/LITELLM_MASTER_KEY
